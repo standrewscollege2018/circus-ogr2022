@@ -1,6 +1,24 @@
+####-----------------------####
+##---------------------------##
+#        RENT FILX            #
+#           1.3               # 
+#      OLIVER G-J 2018        #
+##---------------------------##
+####-----------------------####
+
+
+# -----------------------------
+#         IMPORTED
+#         CONTENT
+# -----------------------------
+
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
+
+# -----------------------------
+#          BACKEND 
+# -----------------------------
 
 class Film:
     
@@ -16,29 +34,44 @@ class Film:
         self._price = price
 
     def _update_stock(self, new_stock):
-        if self._stock + new_stock < 20:
+        if self._stock + new_stock < 20 and self._stock + new_stock >= 0:
             self._stock = self._stock + new_stock
         else:
-            messagebox.askyesno("Error!", "You are unable to have a stock grater than 20 items. Please check the number you are trying to stockup by and try again.")
+            messagebox.showinfo("Error!", "You are unable to have a stock grater than 20 items. Please check the number you are trying to stockup by and try again.")
 
 
     def _sell_film(self, new_sale):
-        if self._stock - new_sale >= 0:
-            self._num_sold = self._num_sold + new_sale
-            self._stock = self._stock - new_sale
-        else:
-            messagebox.askyesno("Error!", "You do not have enough of this film in stock. please try again.")
+        try:
+            sale_number = int(new_sale)
+
+            if self._stock - new_sale >= 0 and new_sale > 0:
+                number_to_sell = str(new_sale)
+                total_sale_price = str(self._price * new_sale)
+                check_messege = "Are you sure you want to sell " + number_to_sell + " films for a total of: $" + total_sale_price
+                if messagebox.askyesno("Check New Film", check_messege):
+                    self._num_sold = self._num_sold + new_sale
+                    self._stock = self._stock - new_sale
+            else:
+                if self._stock - new_sale < 0:
+                    error_messege = "You do not have enough of this film in stock."
+                elif new_sale < 0:
+                    error_messege = "You cannont sell a negitive number of films."
+                else:
+                    error_messege = "An unknown error occoured, Please try again."
+                messagebox.showinfo("Error!", error_messege)
+        except ValueError:
+            messagebox.showinfo("Error", "The number of films to sell must be a positive interger e.g. 0")
 
 def update_label():
     film_info.set("")
-    for p in films:
-        film_info.set(film_info.get() + p._name + "  $" + str(p._price) + " Stock:" + str(p._stock) + " Number Sold:" + str(p._num_sold) + "\n")
+    for f in films:
+        film_info.set(film_info.get() + f._name + "  $" + str(f._price) + " Stock:" + str(f._stock) + " Number Sold:" + str(f._num_sold) + "\n")
 
 def update_optionmenu():
     global film_menu
     film_menu.children["menu"].delete(0, "end")
-    for p in films:
-        film_menu.children["menu"].add_command(label=p._name, command=lambda film=p._name: selected_film.set(film))
+    for f in films:
+        film_menu.children["menu"].add_command(label=p._name, command=lambda film=f._name: selected_film.set(film))
     selected_film.set("Select a film")
 
 # a new film, update the price and update the stock
@@ -74,10 +107,14 @@ def add():
 def edit():
     for f in films:
         if f._name == selected_film.get():
-            if edit_price.get() > 0:
-                f._update_price(edit_price.get())
+            if edit_price.get() >= 0:
+                print_new_price = str(edit_price.get())
+                # Confim wether the user wants to update the price
+                check_messege = "Are you sure you want to change the price of: " + selected_film.get() + " to $" + print_new_price
+                if messagebox.askyesno("Check New Film", check_messege):
+                    f._update_price(edit_price.get())
             else:
-                messagebox.askyesno("Error!", "The price of a film cannot be below $0, If you wish for the film to be free set the price to $0")
+                messagebox.showinfo("Error!", "The price of a film cannot be below $0, If you wish for the film to be free set the price to $0")
     update_label()
 
 def update_stock():
@@ -89,15 +126,14 @@ def update_stock():
 def sell_film():
     for f in films:
         if f._name == selected_film.get():
-            f._update_stock(sale_num.get() * -1)
             f._sell_film(sale_num.get())
     update_label()
 
 def delete():
-    messege = "Are you sure you want to delete " + selected_film.get()
-    if messagebox.askyesno("Warning!", messege):
-        for p in films:
-            if p._name == selected_film.get():
+    check_messege = "Are you sure you want to remove the film: " + selected_film.get()
+    if messagebox.askyesno("Warning!", check_messege):
+        for f in films:
+            if f._name == selected_film.get():
                 films.remove(p)
         update_optionmenu()      
         update_label()
@@ -109,6 +145,10 @@ film_names = []
 
 Film("Iron Man", 10, 10, 0)
 Film("Ant Man", 5, 10, 0)
+
+# -----------------------------
+#            VIEW 
+# -----------------------------
 
 root = Tk()
 root.title("Add film")
@@ -161,6 +201,11 @@ price_entry = Entry(root, textvariable = new_price).grid(row = 2, column = 1)
 
 # button to add a new film  object
 add_btn = Button(root, text="Add new film", command=add).grid(row = 3)
+
+
+# -----------------------------
+#       Page Controls
+# -----------------------------
 
 update_label()
 root.mainloop()
