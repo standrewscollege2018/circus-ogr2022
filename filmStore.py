@@ -86,7 +86,7 @@ def update_optionmenu():
 def add():
     global film_menu
     # Check if any films exsits with the same name. If so tell the user that film allready exists.
-    if not any(f._name == new_film.get() for f in films):
+    if not any(f._name.lower() == new_film.get().lower() for f in films):
         # Try change the input value to an int
         try:
             add_price = int(new_price.get())
@@ -155,7 +155,7 @@ def sell_film():
                 f._sell_film(sale_num.get())
         update_label()
     except:
-        messagebox.showinfo("Error", "The number of films to sell must be a positive interger e.g. 0")
+        messagebox.showinfo("Error", "The number of films to sell must be an interger e.g. 0")
 
 # Get the selected film from the drop down menu, loop through all films until we have the one selected and remove it.
 # Ask the user if they are sure before removing.
@@ -185,10 +185,10 @@ root.title("Rent Filx - Version 1.4")
 root.geometry('1045x5000')
 
 # --------- Row One -----------
-# photo = PhotoImage(file="banner.png")
-# photo = photo.subsample(4)
-# photo_lbl = Label(root, image=photo)
-# photo_lbl.grid(row = 0, padx=0, pady=0, columnspan=4)
+photo = PhotoImage(file="banner.png")
+photo = photo.subsample(4)
+photo_lbl = Label(root, image=photo)
+photo_lbl.grid(row = 0, padx=0, pady=0, columnspan=4)
 
 # --------- Row Two -----------
 films_title_lbl = Label(root, font=("Roboto 30 bold"), fg="red", text="Films:")
@@ -209,18 +209,18 @@ film_lbl.grid(row = 3, column=0, columnspan=2, rowspan = 6)
 # --------- Row Four -----------
 # Number To Sell
 sale_num = IntVar()
-edit_entry = Entry(root, textvariable = sale_num).grid(row = 4, column = 2)
+num_sell_entry = Entry(root, textvariable = sale_num).grid(row = 4, column = 2)
 
 # button to sell
-edit_btn = Button(root, text="Sell Film", command = sell_film).grid(row = 4, column = 3)
+num_sell_bnt = Button(root, text="Sell Film", command = sell_film).grid(row = 4, column = 3)
 
 # --------- Row Five -----------
 # entry field for editing stock
 edit_stock = IntVar()
-edit_entry = Entry(root, textvariable=edit_stock).grid(row = 5, column = 2)
+add_stock_entry = Entry(root, textvariable=edit_stock).grid(row = 5, column = 2)
 
 # button to edit the stock
-edit_btn = Button(root, text="Edit Stock", command = update_stock).grid(row = 5, column = 3)
+add_stock_btn = Button(root, text="Edit Stock", command = update_stock).grid(row = 5, column = 3)
 
 # --------- Row Six ------------
 # entry field for editing price
@@ -241,7 +241,7 @@ add_lbl.grid(row = 8, column=0, padx=0, pady = (60, 10), columnspan=4)
 # -------- Row Nine -----------
 # entry fields for new film name and price
 new_film = StringVar()
-new_price = StringVar()
+new_price = f()
 new_film.set("Enter film name")
 new_price.set("Price")
 
