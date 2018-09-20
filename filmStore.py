@@ -31,12 +31,12 @@ class Film:
         film_names.append(self._name)
 
     # Update the price overiding the old one with the new one from the entry feild.
-    def _update_price(self, price):
+    def update_object_price(self, price):
         self._price = price
 
     # If the stock total stock will not exceed 20 and is not less than 0 allows the user to add or remove stock
     # if it fails show an error messege 
-    def _update_stock(self, new_stock):
+    def update_object_stock(self, new_stock):
         if self._stock + new_stock <= 20 and self._stock + new_stock >= 0:
             self._stock = self._stock + new_stock
             messagebox.showinfo("Stock Updated", "The films stock has been updated.")
@@ -45,7 +45,7 @@ class Film:
 
     # Try removing the number wanted to sell from film
     # add the numbered sold to the films total sold
-    def _sell_film(self, new_sale):
+    def update_object_sell(self, new_sale):
         try:
             sale_number = int(new_sale)
 
@@ -134,7 +134,7 @@ def edit():
                         # Confim wether the user wants to update the price
                         check_messege = "Are you sure you want to change the price of: " + selected_film.get() + " to $" + print_new_price
                         if messagebox.askyesno("Check New Film", check_messege):
-                            f._update_price(edit_price.get())
+                            f.update_object_price(edit_price.get())
                             check_messege = "The price for the film: " + selected_film.get() + " has been updated to $" + print_new_price
                             messagebox.showinfo("Price Updated", check_messege)
                             update_label()
@@ -152,7 +152,7 @@ def update_stock():
         try:
             for f in films:
                 if f._name == selected_film.get():
-                    f._update_stock(edit_stock.get())
+                    f.update_object_stock(edit_stock.get())
             update_label()
         except:
             messagebox.showinfo("Error", "The number of films to stock up by must be a positive interger e.g. 0")
@@ -166,7 +166,7 @@ def sell_film():
         try:
                 for f in films:
                     if f._name == selected_film.get():
-                        f._sell_film(sale_num.get())
+                        f.update_object_sell(sale_num.get())
                 update_label()
         except:
             messagebox.showinfo("Error", "The number of films to sell must be an interger e.g. 0")
